@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Step3 - Adding Axes</title>
+    <style>
+        body {
+            font: 10px sans-serf;
+        }
+        path{
+            stroke: #f00;
+            fill: none;
+        }
+        line {
+            stroke: #f00;
+        }
+    </style>
+    <script src="./bower_components/d3/d3.js"></script>
+</head>
+<body>
+<h1>Step3 - Adding Axes</h1>
+<script>
+    var fullWidth = 640;
+    var fullHeight = 480;
+    var margin = {bottom: 30, left: 40};
+    var width = fullWidth - margin.left;
+    var height = fullHeight - margin.bottom;
+
+    //Before we can add an axis, we need to clear some space in the margins.
+    var svg = d3.select("body").append("svg").attr("width", fullWidth).attr("height", fullHeight);
+    var x = d3.scale.ordinal().rangeRoundBands([0, width],.1);
+    var y = d3.scale.linear().range([height, 0]);
+
+    var chart =svg.append("g").attr("transform", "translate("+margin.left+")");
+
+    //top, right, bottom, left
+    //We define an axis by binding it to our existing x-scale and declaring one of the four orientations.
+    // Since our x-axis will appear below the bars, here we use the "bottom" orientation.
+    var xAxis = d3.svg.axis().scale(x).orient("bottom");
+
+    var yAxis = d3.svg.axis().scale(y).orient("left");
+
+    //A format string as the second argument to axis.
+    // ticks will customize the tick formatting,
+    // and the scale will automatically choose a precision appropriate to the tick interval.
+    //var yAxis = d3.svg.axis().scale(y).orient("left").ticks(10, "%");
+
+    d3.tsv("data.tsv", type, function (error, data) {
+        x.domain( data.map(function(d) {
+            return d.letter;
+        }));
+        y.domain( [0, d3.max(data, function (d) {
+            return d.frequency;
+        })]);
+
+        chart.selectAll("body").data(data).enter()
+                .append("rect").attr("x", function (d) {
+                    return x(d.letter);
+                })
+                .attr("width", x.rangeBand())
+                .attr("y", function (d) {
+                    return y(d.frequency);
+                })
+                .attr("height", function (d) {
+                    return height - y(d.frequency);
+                });
+
+        //The resulting xAxis object be used to render multiple axes by repeated application using selection.call.
+        //The axis elements are positioned relative to a local origin,
+        // so to transform into the desired position we set the "transform" attribute on a containing g element
+
+        //The axis component consists of a path element which displays the domain,
+        // and multiple g ".tick" elements for each tick mark. A tick in turn contains a text label and a line mark.
+        chart.append("g").attr("transform", "translate(0,"+height+")").call(xAxis);
+
+        //A title can be added to the y-axis by appending a text element and positioning it as desired.
+        var gyAxis = chart.append("g").call(yAxis);
+        gyAxis.append("text").attr("transform", "rotate(-90)").attr("y", 6)
+                .attr("dy", ".71em").style("text-anchor", "end").text("Frequency");
+
+    });
+
+    function type(d) {
+        d.frequency = +d.frequency; // coerce to number
+        return d;
+    }
+</script>
+</body>
+</html>

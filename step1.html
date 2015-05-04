@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>step 1 - Loading an external data file in tab-separated values (TSV) format</title>
+    <style>
+        .chart div {
+            font: 8px sans-serif;
+            background-color: steelblue;
+            text-align: right;
+            padding: 3px;
+            margin: 1px;
+            color: white;
+        }
+    </style>
+    <script src="./bower_components/d3/d3.js"></script>
+</head>
+<body class="chart">
+<h1>Step 1 - Loading an external data file in tab-separated values (TSV) format.</h1>
+<script>
+    //Tab-separated values (TSV) is a convenient tabular data format.
+    d3.tsv("data.tsv", type, function (error, data) {
+
+        // we select the chart container using a class selector.
+        var body = d3.select("body");
+
+        // we initiate the data join by defining the selection to which we will join data.
+        var bar = body.selectAll("div");
+
+        // we join the data (defined previously) to the selection using selection.data.
+        var barUpdate = bar.data(data);
+
+        // Since we know the selection is empty, the returned update and exit selections are also empty,
+        // and we need only handle the enter selection which represents new data for which there was no existing element.
+        // We instantiate these missing elements by appending to the enter selection.
+        var barEnter = barUpdate.enter().append("div");
+        barEnter.style("width", function(d) { return d.frequency * 5000 + "px"; })
+                .text(function (d) {
+                   return (d.letter + ": " + d.frequency);
+                });
+    });
+
+    //By default, all columns in TSV and CSV files are strings.
+    function type(d) {
+        d.frequency = +d.frequency; // coerce to number
+        return d;
+    }
+</script>
+</body>
+</html>

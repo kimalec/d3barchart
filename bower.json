@@ -1,0 +1,24 @@
+{
+  "name": "d3barchart",
+  "version": "0.0.1",
+  "homepage": "https://github.com/kimalec/d3barchart",
+  "authors": [
+    "Alec Kim <kimalec7@gmail.com>"
+  ],
+  "description": "Survey using d3-tip to add tooltips to a d3 bar chart",
+  "main": "index.html",
+  "keywords": [
+    "d3"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3-tip": "~0.6.6"
+  }
+}

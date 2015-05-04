@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>step 2 - bar chart using SVG</title>
+    <script src="./bower_components/d3/d3.js"></script>
+</head>
+<body>
+<h1>Step 2 - bar chart using SVG</h1>
+<script>
+    var width = 640;
+    var height = 480;
+
+    var svg = d3.select("body").append("svg").attr("width", width).attr("height", height);
+
+    //The rangeBands method computes range values so as to divide the chart area into evenly-spaced,
+    // evenly-sized bands, as in a bar chart.
+    // The similar rangePoints method computes evenly-spaced range values as in a scatterplot.
+    // For example:
+    //var x = d3.scale.ordinal().rangeBands([0, width]);
+
+    //rangeRoundBands variant will compute positions that snap to exact pixel boundaries for crisp edges.
+    //scale.rangeRoundBands = function(x, padding, outerPadding)
+    var x = d3.scale.ordinal().rangeRoundBands([0, width],.1);
+
+    //D3’s scales specify a mapping from data space (domain) to display space (range)
+    // var y = d3.scale.linear().domain([0, d3.max(data)]).range([0,420])
+    //var y = d3.scale.linear().range([0, height]);
+    var y = d3.scale.linear().range([height, 0]);
+
+    d3.tsv("data.tsv", type, function (error, data) {
+        x.domain( data.map(function(d) {
+            return d.letter;
+        }));
+        y.domain( [0, d3.max(data, function (d) {
+            return d.frequency;
+        })]);
+
+        svg.selectAll("svg").data(data).enter()
+                .append("rect").attr("x", function (d) {
+                    return x(d.letter);
+                })
+                //x.rangeBand() returns the width of each bar.
+                .attr("width", x.rangeBand())
+                .attr("y", function (d) {
+                    //Although y here looks like an object, it is also a function that returns the scaled display value
+                    // in the range for a given data value in the domain. For example, an input value of 4 returns 40
+                    return y(d.frequency);
+                })
+                .attr("height", function (d) {
+                    return height - y(d.frequency);
+                })
+
+    });
+
+    function type(d) {
+        d.frequency = +d.frequency; // coerce to number
+        return d;
+    }
+</script>
+</body>
+</html>
