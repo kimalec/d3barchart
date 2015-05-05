@@ -53,9 +53,6 @@
             return d.frequency;
         })]);
 
-        chart.append("g").attr("transform", "translate(0,"+height+")").call(xAxis);
-        chart.append("g").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6)
-                .attr("dy", ".71em").style("text-anchor", "end").text("Frequency");
 
         chart.selectAll("svg").data(data).enter()
                 .append("rect").attr("x", function (d) {
@@ -69,7 +66,12 @@
                     return height - y(d.frequency);
                 })
                 // Show and hide the tooltip
-                .on('mouseover', tip.show).on('mountout'.tip.hide);
+                .on('mouseover', tip.show).on('mouseout',tip.hide);
+
+        chart.append("g").attr("transform", "translate(0,"+height+")").call(xAxis);
+        chart.append("g").call(yAxis).append("text").attr("transform", "rotate(-90)").attr("y", 6)
+                .attr("dy", ".71em").style("text-anchor", "end").text("Frequency");
+
     });
 
     function type(d) {
